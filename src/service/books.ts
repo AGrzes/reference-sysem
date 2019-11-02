@@ -62,12 +62,12 @@ export default {
     put: simplePut<Book>(booksDb)
   },
   authors: {
-    list: listByIndex<Author>(booksDb, 'byKind', {key: 'series'}),
+    list: listByIndex<Author>(booksDb, 'byKind', {key: 'author'}),
     get: simpleGet<Author>(booksDb),
     put: simplePut<Author>(booksDb)
   },
   series: {
-    list: listByIndex<Series>(booksDb, 'byKind', {key: 'author'}),
+    list: listByIndex<Series>(booksDb, 'byKind', {key: 'series'}),
     get: simpleGet<Series>(booksDb),
     put: simplePut<Series>(booksDb)
   },
