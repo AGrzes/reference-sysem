@@ -1,4 +1,4 @@
-import {Api, app, bootstrap, itemHandler, listHandler, router , Vue} from 'yellow-common-vue'
+import {Api, app, bootstrap, HandlerGenerator, router , Vue} from 'yellow-common-vue'
 // import './components'
 
 Vue.component('book-summary', {
@@ -159,11 +159,21 @@ Vue.component('read-details', {
 
 const api = new Api('/api/books/', false)
 
-const containerWrapper = (content) => `
+const hg = new HandlerGenerator({
+  containerWrapper(content) {
+    return `
 <div class="col-9">
   ${content}
 </div>
-`
+    `
+  },
+  listFetchGenerator(name) {
+    return api.list(name)
+  },
+  itemFetchGenerator(name) {
+    return api.get(name)
+  }
+})
 
 app({router: router([
   {
@@ -197,18 +207,18 @@ app({router: router([
         `
       },
       children: [
-        listHandler({name: 'book', fetch: api.list('books'), containerWrapper}),
-        itemHandler({name: 'book', fetch: api.get('books'), containerWrapper}),
-        listHandler({name: 'author', fetch: api.list('authors'), containerWrapper}),
-        itemHandler({name: 'author', fetch: api.get('authors'), containerWrapper}),
-        listHandler({name: 'series', listName: 'series', fetch: api.list('series'), containerWrapper}),
-        itemHandler({name: 'series', listName: 'series', fetch: api.get('series'), containerWrapper}),
-        listHandler({name: 'read', listName: 'read', fetch: api.list('read'), containerWrapper}),
-        itemHandler({name: 'read', listName: 'read', fetch: api.get('read'), containerWrapper}),
-        listHandler({name: 'owned', listName: 'owned', fetch: api.list('owned'), containerWrapper}),
-        itemHandler({name: 'owned', listName: 'owned', fetch: api.get('owned'), containerWrapper}),
-        listHandler({name: 'wanted', listName: 'wanted', fetch: api.list('wanted'), containerWrapper}),
-        itemHandler({name: 'wanted', listName: 'wanted', fetch: api.get('wanted'), containerWrapper})
+        hg.list({name: 'book', path: 'books', fetch: api.list('books')}),
+        hg.item({name: 'book', path: 'books/:book', fetch: api.get('books')}),
+        hg.list({name: 'author', path: 'authors', fetch: api.list('authors')}),
+        hg.item({name: 'author', path: 'authors/:author', fetch: api.get('authors')}),
+        hg.list({name: 'series'}),
+        hg.item({name: 'series'}),
+        hg.list({name: 'read'}),
+        hg.item({name: 'read'}),
+        hg.list({name: 'owned'}),
+        hg.item({name: 'owned'}),
+        hg.list({name: 'wanted'}),
+        hg.item({name: 'wanted'})
       ]
     }
   ]
