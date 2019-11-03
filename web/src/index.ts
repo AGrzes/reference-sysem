@@ -1,3 +1,4 @@
+import * as _ from 'lodash'
 import {Api, app, bootstrap, HandlerGenerator, router , Vue} from 'yellow-common-vue'
 
 function listComponent({name, label, secondaryLabel}: {name: string, label?: string, secondaryLabel?: string}) {
@@ -5,6 +6,33 @@ function listComponent({name, label, secondaryLabel}: {name: string, label?: str
   const sl = secondaryLabel ? `<small>{{${name}.${secondaryLabel}}}</small>` : ''
   Vue.component(`${name}-summary`, {
     props: [name],
+    template:  `
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">{{${name}.${label}}} ${sl}</h5>
+      <router-link :to="{name:'${name}',params:{${name}:${name}._id}}" class="nav-link">Details</router-link>
+    </div>
+  </div>
+    `
+  })
+}
+
+interface FieldDescriptor {
+  name: string
+  section?: string
+  kind?: 'string' | 'reference'
+  multiplicity: 'single' | 'multiple' | 'single-multiple'
+}
+
+function groupFields(groups: string[], fields: FieldDescriptor[]): {[group: string]: FieldDescriptor[]} {
+  return _.groupBy(fields, (fd) => _.includes(groups, fd.section) ? fd.section : 'default')
+}
+
+function genericComponent(name: string, itemName: string, fields: FieldDescriptor[]) {
+  const sections = groupFields(['header', 'subHeader'], fields)
+
+  Vue.component(name, {
+    props: [itemName],
     template:  `
   <div class="card">
     <div class="card-body">
