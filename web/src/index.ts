@@ -1,17 +1,24 @@
 import {Api, app, bootstrap, HandlerGenerator, router , Vue} from 'yellow-common-vue'
-// import './components'
 
-Vue.component('book-summary', {
-  props: ['book'],
-  template:  `
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">{{book.name}} <small>{{book.author}}</small></h5>
-    <router-link :to="{name:'book',params:{book:book._id}}" class="nav-link">Details</router-link>
+function listComponent({name, label, secondaryLabel}: {name: string, label?: string, secondaryLabel?: string}) {
+  label = label || 'name'
+  const sl = secondaryLabel ? `<small>{{${name}.${secondaryLabel}}}</small>` : ''
+  Vue.component(`${name}-summary`, {
+    props: [name],
+    template:  `
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">{{${name}.${label}}} ${sl}</h5>
+      <router-link :to="{name:'${name}',params:{${name}:${name}._id}}" class="nav-link">Details</router-link>
+    </div>
   </div>
-</div>
-  `
-})
+    `
+  })
+}
+
+listComponent({name: 'book', label: 'title', secondaryLabel: 'author'});
+['author', 'series'].forEach((name) => listComponent({name}));
+['owned', 'wanted', 'read'].forEach((name) => listComponent({name, label: 'book'}))
 
 Vue.component('book-details', {
   props: ['book'],
@@ -21,18 +28,6 @@ Vue.component('book-details', {
     <h5 class="card-title">{{book.name}} <small>{{book.author}}</small></h5>
     <p>{{book.description}}</p>
     <span class="badge badge-primary mr-1" v-for="label in book.labels">{{label}}</span>
-  </div>
-</div>
-  `
-})
-
-Vue.component('author-summary', {
-  props: ['author'],
-  template:  `
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">{{author.name}}</h5>
-    <router-link :to="{name:'author',params:{author:author._id}}" class="nav-link">Details</router-link>
   </div>
 </div>
   `
@@ -53,18 +48,6 @@ Vue.component('author-details', {
   `
 })
 
-Vue.component('series-summary', {
-  props: ['series'],
-  template:  `
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">{{series.name}}</h5>
-    <router-link :to="{name:'series',params:{series:series._id}}" class="nav-link">Details</router-link>
-  </div>
-</div>
-  `
-})
-
 Vue.component('series-details', {
   props: ['series'],
   template:  `
@@ -75,18 +58,6 @@ Vue.component('series-details', {
     <ul>
       <router-link :to="{name:'book',params:{book}}" tag="li" v-for="book in series.books">book</router-link>
     </ul>
-  </div>
-</div>
-  `
-})
-
-Vue.component('owned-summary', {
-  props: ['owned'],
-  template:  `
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">{{owned.book}}</h5>
-    <router-link :to="{name:'owned',params:{owned:owned._id}}" class="nav-link">Details</router-link>
   </div>
 </div>
   `
@@ -106,18 +77,6 @@ Vue.component('owned-details', {
   `
 })
 
-Vue.component('wanted-summary', {
-  props: ['wanted'],
-  template:  `
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">{{wanted.book}}</h5>
-    <router-link :to="{name:'wanted',params:{wanted:wanted._id}}" class="nav-link">Details</router-link>
-  </div>
-</div>
-  `
-})
-
 Vue.component('wanted-details', {
   props: ['wanted'],
   template:  `
@@ -125,18 +84,6 @@ Vue.component('wanted-details', {
   <div class="card-body">
     <h5 class="card-title"><router-link :to="{name:'book',params:{book: wanted.book}}">{{wanted.book}}</router-link></h5>
     <p>{{wanted.description}}</p>
-  </div>
-</div>
-  `
-})
-
-Vue.component('read-summary', {
-  props: ['read'],
-  template:  `
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">{{read.book}}</h5>
-    <router-link :to="{name:'read',params:{read:read._id}}" class="nav-link">Details</router-link>
   </div>
 </div>
   `
