@@ -21,34 +21,210 @@ interface FieldDescriptor {
   name: string
   section?: string
   kind?: 'string' | 'reference'
-  multiplicity: 'single' | 'multiple' | 'single-multiple'
+  multiplicity?: 'single' | 'multiple'
 }
 
 function groupFields(groups: string[], fields: FieldDescriptor[]): {[group: string]: FieldDescriptor[]} {
   return _.groupBy(fields, (fd) => _.includes(groups, fd.section) ? fd.section : 'default')
 }
 
-function genericComponent(name: string, itemName: string, fields: FieldDescriptor[]) {
-  const sections = groupFields(['header', 'subHeader'], fields)
+function ensureSingle<T>(value: T|T[]): T {
+  if (_.isArray(value)) {
+    return value[0]
+  } else {
+    return value
+  }
+}
 
-  Vue.component(name, {
-    props: [itemName],
+function ensureMultiple<T>(value: T|T[]): T[] {
+  if (_.isArray(value)) {
+    return value
+  } else {
+    return [value]
+  }
+}
+
+function detailsComponent(name: string, fields: FieldDescriptor[]) {
+  Vue.component(`${name}-details`, {
+    props: [name],
     template:  `
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">{{${name}.${label}}} ${sl}</h5>
-      <router-link :to="{name:'${name}',params:{${name}:${name}._id}}" class="nav-link">Details</router-link>
-    </div>
-  </div>
-    `
+  <generic-details :fields="fields" :item="${name}"></generic-details>
+    `,
+    data() {
+      return {
+        fields
+      }
+    }
   })
 }
+
+Vue.component('text-single', {
+  props: ['field', 'item'],
+  template:  `
+  <span>{{value}}</span>
+  `,
+  computed: {
+    value() {
+      return ensureSingle(this.item[this.field.name])
+    }
+  }
+})
+
+Vue.component('text-bag', {
+  props: ['field', 'item'],
+  template:  `
+  <span><span v-for="value in values" class="mr-1">{{value}}</span><span>
+  `,
+  computed: {
+    values() {
+      return ensureMultiple(this.item[this.field.name])
+    }
+  }
+})
+
+Vue.component('reference-single', {
+  props: ['field', 'item'],
+  template:  `
+  <span>{{value}}</span>
+  `,
+  computed: {
+    value() {
+      return ensureSingle(this.item[this.field.name])
+    }
+  }
+})
+
+Vue.component('reference-bag', {
+  props: ['field', 'item'],
+  template:  `
+  <span><span v-for="value in values" class="mr-1">{{value}}</span><span>
+  `,
+  computed: {
+    values() {
+      return ensureMultiple(this.item[this.field.name])
+    }
+  }
+})
+
+Vue.component('text-block', {
+  props: ['field', 'item'],
+  template:  `
+  <div>{{value}}</div>
+  `,
+  computed: {
+    value() {
+      return ensureSingle(this.item[this.field.name])
+    }
+  }
+})
+
+Vue.component('text-list', {
+  props: ['field', 'item'],
+  template:  `
+  <ul><li v-for="value in values" class="mr-1">{{value}}</li></ul>
+  `,
+  computed: {
+    values() {
+      return ensureMultiple(this.item[this.field.name])
+    }
+  }
+})
+
+Vue.component('reference-block', {
+  props: ['field', 'item'],
+  template:  `
+  <div>{{value}}</div>
+  `,
+  computed: {
+    value() {
+      return ensureSingle(this.item[this.field.name])
+    }
+  }
+})
+
+Vue.component('reference-list', {
+  props: ['field', 'item'],
+  template:  `
+    <ul><li  v-for="value in values" class="mr-1">{{value}}</li></ul>
+  `,
+  computed: {
+    values() {
+      return ensureMultiple(this.item[this.field.name])
+    }
+  }
+})
+
+const inlineComponents = {
+  single: {
+    string: 'text-single',
+    reference: 'reference-single'
+  },
+  multiple: {
+    string: 'text-bag',
+    reference: 'reference-bag'
+  }
+}
+
+Vue.component('field-inline', {
+  props: ['field', 'item'],
+  template:  `
+  <component :is="component" :field="field" :item="item"></component>
+  `,
+  computed: {
+    component() {
+      return inlineComponents[this.field.multiplicity || 'single'][this.field.kind || 'string']
+    }
+  }
+})
+
+const blockComponents = {
+  single: {
+    string: 'text-block',
+    reference: 'reference-block'
+  },
+  multiple: {
+    string: 'text-list',
+    reference: 'reference-list'
+  }
+}
+
+Vue.component('field-block', {
+  props: ['field', 'item'],
+  template:  `
+  <component :is="component" :field="field" :item="item"></component>
+  `,
+  computed: {
+    component() {
+      return blockComponents[this.field.multiplicity || 'single'][this.field.kind || 'string']
+    }
+  }
+})
+
+Vue.component('generic-details', {
+  props: ['fields', 'item'],
+  template:  `
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">
+      <field-inline :field="field" :item="item" v-for="field in sections.header" :key="field.name"></field-inline>
+      <small><field-inline :field="field" :item="item" v-for="field in sections.subHeader" :key="field.name"></field-inline></small>
+    </h5>
+    <field-block :field="field" :item="item" v-for="field in sections.default" :key="field.name"></field-block>
+  </div>
+</div>
+  `,
+  computed: {
+    sections(): {[section: string]: FieldDescriptor[]} {
+      return groupFields(['header', 'subHeader'], this.fields)
+    }
+  }
+})
 
 listComponent({name: 'book', label: 'title', secondaryLabel: 'author'});
 ['author', 'series'].forEach((name) => listComponent({name}));
 ['owned', 'wanted', 'read'].forEach((name) => listComponent({name, label: 'book'}))
 
-Vue.component('book-details', {
+/*Vue.component('book-details', {
   props: ['book'],
   template:  `
 <div class="card">
@@ -59,7 +235,12 @@ Vue.component('book-details', {
   </div>
 </div>
   `
-})
+})*/
+
+detailsComponent('book', [{name: 'name', kind: 'string', section: 'header'},
+{name: 'author', kind: 'reference', section: 'subHeader'},
+{name: 'description', kind: 'string'},
+{name: 'labels', kind: 'string', multiplicity: 'multiple' }])
 
 Vue.component('author-details', {
   props: ['author'],
