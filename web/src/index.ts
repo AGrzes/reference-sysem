@@ -165,18 +165,6 @@ const inlineComponents = {
   }
 }
 
-Vue.component('field-inline', {
-  props: ['field', 'item'],
-  template:  `
-  <component :is="component" :field="field" :item="item"></component>
-  `,
-  computed: {
-    component() {
-      return inlineComponents[this.field.multiplicity || 'single'][this.field.kind || 'string']
-    }
-  }
-})
-
 const blockComponents = {
   single: {
     string: 'text-block',
@@ -188,17 +176,13 @@ const blockComponents = {
   }
 }
 
-Vue.component('field-block', {
-  props: ['field', 'item'],
-  template:  `
-  <component :is="component" :field="field" :item="item"></component>
-  `,
-  computed: {
-    component() {
-      return blockComponents[this.field.multiplicity || 'single'][this.field.kind || 'string']
-    }
+function resolveComponent(field: FieldDescriptor, context: any, item: any): string {
+  if (context.block) {
+    return blockComponents[field.multiplicity || 'single'][field.kind || 'string']
+  } else if (context.inline) {
+    return inlineComponents[field.multiplicity || 'single'][field.kind || 'string']
   }
-})
+}
 
 Vue.component('generic-details', {
   props: ['fields', 'item'],
@@ -206,10 +190,27 @@ Vue.component('generic-details', {
 <div class="card">
   <div class="card-body">
     <h5 class="card-title">
-      <field-inline :field="field" :item="item" v-for="field in sections.header" :key="field.name"></field-inline>
-      <small><field-inline :field="field" :item="item" v-for="field in sections.subHeader" :key="field.name"></field-inline></small>
+      <component :is="resolveComponent(field,{inline:true},item)"
+        :field="field"
+        :item="item"
+        v-for="field in sections.header"
+        :key="field.name">
+      </component>
+      <small>
+        <component :is="resolveComponent(field,{inline:true},item)"
+          :field="field"
+          :item="item"
+          v-for="field in sections.subHeader"
+          :key="field.name">
+        </component>
+      </small>
     </h5>
-    <field-block :field="field" :item="item" v-for="field in sections.default" :key="field.name"></field-block>
+    <component :is="resolveComponent(field,{block:true},item)"
+      :field="field"
+      :item="item"
+      v-for="field in sections.default"
+      :key="field.name">
+    </component>
   </div>
 </div>
   `,
@@ -217,6 +218,9 @@ Vue.component('generic-details', {
     sections(): {[section: string]: FieldDescriptor[]} {
       return groupFields(['header', 'subHeader'], this.fields)
     }
+  },
+  methods: {
+    resolveComponent
   }
 })
 
