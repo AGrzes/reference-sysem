@@ -16,20 +16,9 @@ detailsComponent('author', [{name: 'name', kind: 'string', section: 'header'},
 {name: 'description', kind: 'string'},
 {name: 'books', kind: 'reference', target: 'book', multiplicity: 'multiple'}])
 
-Vue.component('series-details', {
-  props: ['series'],
-  template:  `
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">{{series.name}}</h5>
-    <p>{{series.description}}</p>
-    <ul>
-      <router-link :to="{name:'book',params:{book}}" tag="li" v-for="book in series.books">book</router-link>
-    </ul>
-  </div>
-</div>
-  `
-})
+detailsComponent('series', [{name: 'name', kind: 'string', section: 'header'},
+{name: 'description', kind: 'string'},
+{name: 'books', kind: 'reference', target: 'book', multiplicity: 'multiple'}])
 
 Vue.component('owned-details', {
   props: ['owned'],
