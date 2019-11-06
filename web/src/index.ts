@@ -7,38 +7,14 @@ listComponent({name: 'book', label: 'title', secondaryLabel: 'author'});
 ['author', 'series'].forEach((name) => listComponent({name}));
 ['owned', 'wanted', 'read'].forEach((name) => listComponent({name, label: 'book'}))
 
-/*Vue.component('book-details', {
-  props: ['book'],
-  template:  `
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">{{book.name}} <small>{{book.author}}</small></h5>
-    <p>{{book.description}}</p>
-    <span class="badge badge-primary mr-1" v-for="label in book.labels">{{label}}</span>
-  </div>
-</div>
-  `
-})*/
-
 detailsComponent('book', [{name: 'name', kind: 'string', section: 'header'},
 {name: 'author', kind: 'reference', target: 'author', section: 'subHeader'},
 {name: 'description', kind: 'string'},
 {name: 'labels', kind: 'string', multiplicity: 'multiple' }])
 
-Vue.component('author-details', {
-  props: ['author'],
-  template:  `
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">{{author.name}}</h5>
-    <p>{{author.description}}</p>
-    <ul>
-      <router-link :to="{name:'book',params:{book}}" tag="li" v-for="book in author.books">book</router-link>
-    </ul>
-  </div>
-</div>
-  `
-})
+detailsComponent('author', [{name: 'name', kind: 'string', section: 'header'},
+{name: 'description', kind: 'string'},
+{name: 'books', kind: 'reference', target: 'book', multiplicity: 'multiple'}])
 
 Vue.component('series-details', {
   props: ['series'],
