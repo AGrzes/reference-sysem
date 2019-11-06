@@ -21,6 +21,7 @@ interface FieldDescriptor {
   name: string
   section?: string
   kind?: 'string' | 'reference'
+  target?: string
   multiplicity?: 'single' | 'multiple'
 }
 
@@ -85,11 +86,23 @@ Vue.component('text-bag', {
 Vue.component('reference-single', {
   props: ['field', 'item'],
   template:  `
-  <span>{{value}}</span>
+  <span>
+    <router-link :to="to(value)">{{value}}</router-link>
+  </span>
   `,
   computed: {
     value() {
       return ensureSingle(this.item[this.field.name])
+    }
+  },
+  methods: {
+    to(value: string) {
+      return {
+        name: `${this.field.target}`,
+        params: {
+          [this.field.target]: value
+        }
+      }
     }
   }
 })
@@ -97,11 +110,25 @@ Vue.component('reference-single', {
 Vue.component('reference-bag', {
   props: ['field', 'item'],
   template:  `
-  <span><span v-for="value in values" class="mr-1">{{value}}</span><span>
+  <span>
+    <span v-for="value in values" class="mr-1">
+      <router-link :to="to(value)">{{value}}</router-link>
+    </span>
+  <span>
   `,
   computed: {
     values() {
       return ensureMultiple(this.item[this.field.name])
+    }
+  },
+  methods: {
+    to(value: string) {
+      return {
+        name: `${this.field.target}`,
+        params: {
+          [this.field.target]: value
+        }
+      }
     }
   }
 })
@@ -133,11 +160,23 @@ Vue.component('text-list', {
 Vue.component('reference-block', {
   props: ['field', 'item'],
   template:  `
-  <div>{{value}}</div>
+  <div>
+    <router-link :to="to(value)">{{value}}</router-link>
+  </div>
   `,
   computed: {
     value() {
       return ensureSingle(this.item[this.field.name])
+    }
+  },
+  methods: {
+    to(value: string) {
+      return {
+        name: `${this.field.target}`,
+        params: {
+          [this.field.target]: value
+        }
+      }
     }
   }
 })
@@ -145,11 +184,25 @@ Vue.component('reference-block', {
 Vue.component('reference-list', {
   props: ['field', 'item'],
   template:  `
-    <ul><li  v-for="value in values" class="mr-1">{{value}}</li></ul>
+    <ul>
+      <li  v-for="value in values" class="mr-1">
+        <router-link :to="to(value)">{{value}}</router-link>
+      </li>
+    </ul>
   `,
   computed: {
     values() {
       return ensureMultiple(this.item[this.field.name])
+    }
+  },
+  methods: {
+    to(value: string) {
+      return {
+        name: `${this.field.target}`,
+        params: {
+          [this.field.target]: value
+        }
+      }
     }
   }
 })
@@ -242,7 +295,7 @@ listComponent({name: 'book', label: 'title', secondaryLabel: 'author'});
 })*/
 
 detailsComponent('book', [{name: 'name', kind: 'string', section: 'header'},
-{name: 'author', kind: 'reference', section: 'subHeader'},
+{name: 'author', kind: 'reference', target: 'author', section: 'subHeader'},
 {name: 'description', kind: 'string'},
 {name: 'labels', kind: 'string', multiplicity: 'multiple' }])
 
