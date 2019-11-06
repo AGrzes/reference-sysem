@@ -20,31 +20,13 @@ detailsComponent('series', [{name: 'name', kind: 'string', section: 'header'},
 {name: 'description', kind: 'string'},
 {name: 'books', kind: 'reference', target: 'book', multiplicity: 'multiple'}])
 
-Vue.component('owned-details', {
-  props: ['owned'],
-  template:  `
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title"><router-link :to="{name:'book',params:{book: owned.book}}">{{owned.book}}</router-link></h5>
-    <p>{{owned.description}}</p>
-    <span class="badge badge-primary mr-1">{{owned.form}}</span>
-    <span class="badge badge-primary mr-1">{{owned.library}}</span>
-  </div>
-</div>
-  `
-})
+detailsComponent('owned', [{name: 'book', kind: 'reference', target: 'book', section: 'header'},
+{name: 'description', kind: 'string'},
+{name: 'form', kind: 'string'},
+{name: 'library', kind: 'string'}])
 
-Vue.component('wanted-details', {
-  props: ['wanted'],
-  template:  `
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title"><router-link :to="{name:'book',params:{book: wanted.book}}">{{wanted.book}}</router-link></h5>
-    <p>{{wanted.description}}</p>
-  </div>
-</div>
-  `
-})
+detailsComponent('wanted', [{name: 'book', kind: 'reference', target: 'book', section: 'header'},
+{name: 'description', kind: 'string'}])
 
 Vue.component('read-details', {
   props: ['read'],
