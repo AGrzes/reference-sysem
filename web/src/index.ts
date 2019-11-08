@@ -1,108 +1,40 @@
-import {Api, app, bootstrap, HandlerGenerator, router , Vue} from 'yellow-common-vue'
+import * as _ from 'lodash'
+import {Api, app, bootstrap, components, detailsComponent , HandlerGenerator, listComponent, router, Vue} from 'yellow-common-vue'
 
-function listComponent({name, label, secondaryLabel}: {name: string, label?: string, secondaryLabel?: string}) {
-  label = label || 'name'
-  const sl = secondaryLabel ? `<small>{{${name}.${secondaryLabel}}}</small>` : ''
-  Vue.component(`${name}-summary`, {
-    props: [name],
-    template:  `
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">{{${name}.${label}}} ${sl}</h5>
-      <router-link :to="{name:'${name}',params:{${name}:${name}._id}}" class="nav-link">Details</router-link>
-    </div>
-  </div>
-    `
-  })
-}
+components()
 
 listComponent({name: 'book', label: 'title', secondaryLabel: 'author'});
 ['author', 'series'].forEach((name) => listComponent({name}));
 ['owned', 'wanted', 'read'].forEach((name) => listComponent({name, label: 'book'}))
 
-Vue.component('book-details', {
-  props: ['book'],
-  template:  `
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">{{book.name}} <small>{{book.author}}</small></h5>
-    <p>{{book.description}}</p>
-    <span class="badge badge-primary mr-1" v-for="label in book.labels">{{label}}</span>
-  </div>
-</div>
-  `
-})
+detailsComponent('book', [{name: 'name', kind: 'string', section: 'header'},
+{name: 'author', kind: 'reference', target: 'author', section: 'subHeader'},
+{name: 'description', kind: 'string'},
+{name: 'labels', kind: 'enum', multiplicity: 'multiple' }])
 
-Vue.component('author-details', {
-  props: ['author'],
-  template:  `
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">{{author.name}}</h5>
-    <p>{{author.description}}</p>
-    <ul>
-      <router-link :to="{name:'book',params:{book}}" tag="li" v-for="book in author.books">book</router-link>
-    </ul>
-  </div>
-</div>
-  `
-})
+detailsComponent('author', [{name: 'name', kind: 'string', section: 'header'},
+{name: 'description', kind: 'string'},
+{name: 'books', kind: 'reference', target: 'book', multiplicity: 'multiple'}])
 
-Vue.component('series-details', {
-  props: ['series'],
-  template:  `
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">{{series.name}}</h5>
-    <p>{{series.description}}</p>
-    <ul>
-      <router-link :to="{name:'book',params:{book}}" tag="li" v-for="book in series.books">book</router-link>
-    </ul>
-  </div>
-</div>
-  `
-})
+detailsComponent('series', [{name: 'name', kind: 'string', section: 'header'},
+{name: 'description', kind: 'string'},
+{name: 'books', kind: 'reference', target: 'book', multiplicity: 'multiple'}])
 
-Vue.component('owned-details', {
-  props: ['owned'],
-  template:  `
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title"><router-link :to="{name:'book',params:{book: owned.book}}">{{owned.book}}</router-link></h5>
-    <p>{{owned.description}}</p>
-    <span class="badge badge-primary mr-1">{{owned.form}}</span>
-    <span class="badge badge-primary mr-1">{{owned.library}}</span>
-  </div>
-</div>
-  `
-})
+detailsComponent('owned', [{name: 'book', kind: 'reference', target: 'book', section: 'header'},
+{name: 'description', kind: 'string'},
+{name: 'form', kind: 'string'},
+{name: 'library', kind: 'enum'}])
 
-Vue.component('wanted-details', {
-  props: ['wanted'],
-  template:  `
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title"><router-link :to="{name:'book',params:{book: wanted.book}}">{{wanted.book}}</router-link></h5>
-    <p>{{wanted.description}}</p>
-  </div>
-</div>
-  `
-})
+detailsComponent('wanted', [{name: 'book', kind: 'reference', target: 'book', section: 'header'},
+{name: 'description', kind: 'string'}])
 
-Vue.component('read-details', {
-  props: ['read'],
-  template:  `
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title"><router-link :to="{name:'book',params:{book: read.book}}">{{read.book}}</router-link></h5>
-    <p>{{read.description}}</p>
-    <ul>
-      <li v-for="progress in read.progress">{{progress.date}} page {{progress.position}} <span class="badge badge-primary mr-1">+{{progress.increment}}</span></li>
-    </ul>
-  </div>
-</div>
-  `
-})
+detailsComponent('read', [{name: 'book', kind: 'reference', target: 'book', section: 'header'},
+{name: 'description', kind: 'string'},
+{name: 'progress', kind: 'nested', fields: [
+  {name: 'date', kind: 'string', section: 'inline'},
+  {name: 'position', kind: 'string', section: 'inline'},
+  {name: 'increment', kind: 'enum', section: 'inline'}
+]}])
 
 const api = new Api('/api/books/', false)
 
