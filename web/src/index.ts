@@ -28,20 +28,13 @@ detailsComponent('owned', [{name: 'book', kind: 'reference', target: 'book', sec
 detailsComponent('wanted', [{name: 'book', kind: 'reference', target: 'book', section: 'header'},
 {name: 'description', kind: 'string'}])
 
-Vue.component('read-details', {
-  props: ['read'],
-  template:  `
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title"><router-link :to="{name:'book',params:{book: read.book}}">{{read.book}}</router-link></h5>
-    <p>{{read.description}}</p>
-    <ul>
-      <li v-for="progress in read.progress">{{progress.date}} page {{progress.position}} <span class="badge badge-primary mr-1">+{{progress.increment}}</span></li>
-    </ul>
-  </div>
-</div>
-  `
-})
+detailsComponent('read', [{name: 'book', kind: 'reference', target: 'book', section: 'header'},
+{name: 'description', kind: 'string'},
+{name: 'progress', kind: 'nested', fields: [
+  {name: 'date', kind: 'string', section: 'inline'},
+  {name: 'position', kind: 'string', section: 'inline'},
+  {name: 'increment', kind: 'enum', section: 'inline'}
+]}])
 
 const api = new Api('/api/books/', false)
 
