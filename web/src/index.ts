@@ -10,7 +10,7 @@ listComponent({name: 'book', label: 'title', secondaryLabel: 'author'});
 detailsComponent('book', [{name: 'name', kind: 'string', section: 'header'},
 {name: 'author', kind: 'reference', target: 'author', section: 'subHeader'},
 {name: 'description', kind: 'string'},
-{name: 'labels', kind: 'string', multiplicity: 'multiple' }])
+{name: 'labels', kind: 'enum', multiplicity: 'multiple' }])
 
 detailsComponent('author', [{name: 'name', kind: 'string', section: 'header'},
 {name: 'description', kind: 'string'},
@@ -23,7 +23,7 @@ detailsComponent('series', [{name: 'name', kind: 'string', section: 'header'},
 detailsComponent('owned', [{name: 'book', kind: 'reference', target: 'book', section: 'header'},
 {name: 'description', kind: 'string'},
 {name: 'form', kind: 'string'},
-{name: 'library', kind: 'string'}])
+{name: 'library', kind: 'enum'}])
 
 detailsComponent('wanted', [{name: 'book', kind: 'reference', target: 'book', section: 'header'},
 {name: 'description', kind: 'string'}])
