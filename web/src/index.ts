@@ -76,8 +76,8 @@ app({router: router([
       <router-link :to="{name:'reading'}" class="nav-link">Reading</router-link>
       <router-link :to="{name:'explore'}" class="nav-link">Explore</router-link>
       <router-link :to="{name:'inbox'}" class="nav-link">Inbox</router-link>
-      <div class="pl-4">
-        <h3>Model</h3>
+      <h3>Model</h3>
+      <div>
         <router-link :to="{name:'book-list'}" class="nav-link">Books</router-link>
         <router-link :to="{name:'author-list'}" class="nav-link">Authors</router-link>
         <router-link :to="{name:'series-list'}" class="nav-link">Series</router-link>
@@ -133,29 +133,19 @@ app({router: router([
 <h1>Inbox</h1>
             `
           }
-        }, {
-        name: 'model',
-        path: 'model',
-        component: {
-          template: `
-  <router-view></router-view>
-          `
         },
-        children: [
-          hg.list({name: 'book', path: 'books', fetch: api.list('books')}),
-          hg.item({name: 'book', path: 'books/:book', fetch: api.get('books')}),
-          hg.list({name: 'author', path: 'authors', fetch: api.list('authors')}),
-          hg.item({name: 'author', path: 'authors/:author', fetch: api.get('authors')}),
-          hg.list({name: 'series'}),
-          hg.item({name: 'series'}),
-          hg.list({name: 'read'}),
-          hg.item({name: 'read'}),
-          hg.list({name: 'owned'}),
-          hg.item({name: 'owned'}),
-          hg.list({name: 'wanted'}),
-          hg.item({name: 'wanted'})
-          ]
-        }
+        hg.list({name: 'book', path: 'books', fetch: api.list('books')}),
+        hg.item({name: 'book', path: 'books/:book', fetch: api.get('books')}),
+        hg.list({name: 'author', path: 'authors', fetch: api.list('authors')}),
+        hg.item({name: 'author', path: 'authors/:author', fetch: api.get('authors')}),
+        hg.list({name: 'series'}),
+        hg.item({name: 'series'}),
+        hg.list({name: 'read'}),
+        hg.item({name: 'read'}),
+        hg.list({name: 'owned'}),
+        hg.item({name: 'owned'}),
+        hg.list({name: 'wanted'}),
+        hg.item({name: 'wanted'})
       ]
     }
   ]
