@@ -105,31 +105,26 @@ app({router: router([
           path: 'explore',
           component: {
             template: `
-<div>
-  <h1>Explore</h1>
-  <router-view></router-view>
-</div>
+<h1>Explore</h1>
             `
-          },
-          children: [
-            {
-              name: 'explore-book',
-              path: 'book',
-              component: {
-                template: `
+          }
+        },
+        {
+          name: 'explore-book',
+          path: 'explore/book',
+          component: {
+            template: `
 <h1>Book</h1>
-                `
-              }
-            }, {
-              name: 'explore-author',
-              path: 'author',
-              component: {
-                template: `
+            `
+          }
+        }, {
+          name: 'explore-author',
+          path: 'explore/author',
+          component: {
+            template: `
 <h1>Author</h1>
-                `
-              }
-            }
-          ]
+            `
+          }
         }, {
           name: 'inbox',
           path: 'inbox',
