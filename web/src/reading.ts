@@ -54,7 +54,13 @@ const config: RouteConfig = {
     <tr v-for="book in scheduled">
       <td>{{book.book.name}} <small>{{book.book.author.name}}</small></td>
       <td>{{book.scheduled}}</td>
-      <td>{{book.library.name}}</td>
+      <td>{{book.library.name}}
+        <svg width="64" height="64"
+          xmlns="http://www.w3.org/2000/svg">
+            <circle cx="32" cy="32" r="32" fill="magenta" />
+            <text x="32" y="32" font-size="2em" text-anchor="middle" dy="0.4em" :fill="book.library.color">{{book.library.symbol}}</text>
+        </svg>
+      </td>
     </tr>
   </tbody>
 </table>
@@ -108,7 +114,9 @@ const config: RouteConfig = {
           scheduled: '2019-12',
           library: {
             id: 'library:play',
-            name: 'Play Books'
+            name: 'Play Books',
+            symbol: 'PB',
+            color: 'cyan'
           },
           owned: false
         }, {
@@ -124,7 +132,9 @@ const config: RouteConfig = {
           scheduled: '2019-12',
           library: {
             id: 'library:home',
-            name: 'Books at Home'
+            name: 'Books at Home',
+            symbol: 'H',
+            color: 'blue'
           },
           owned: true
         }]
