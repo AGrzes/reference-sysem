@@ -1,5 +1,6 @@
 import * as _ from 'lodash'
 import {Api, app, bootstrap, components, detailsComponent , HandlerGenerator, listComponent, router, Vue} from 'yellow-common-vue'
+import reading from './reading'
 
 components()
 
@@ -92,15 +93,7 @@ app({router: router([
         `
       },
       children: [
-        {
-          name: 'reading',
-          path: 'reading',
-          component: {
-            template: `
-<h1>Reading</h1>
-            `
-          }
-        }, {
+        reading, {
           name: 'explore',
           path: 'explore',
           component: {
