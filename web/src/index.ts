@@ -1,5 +1,6 @@
 import * as _ from 'lodash'
-import {Api, app, bootstrap, components, detailsComponent , HandlerGenerator, listComponent, router, Vue} from 'yellow-common-vue'
+import {Api, app, bootstrap, components, detailsComponent , HandlerGenerator, listComponent, router} from 'yellow-common-vue'
+import './components'
 import reading from './reading'
 
 components()
