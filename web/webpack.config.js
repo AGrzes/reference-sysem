@@ -1,6 +1,13 @@
 const path = require('path');
 const webpack = require('webpack');
 
+const fileLoader = {
+  loader: 'file-loader',
+  options: {
+    publicPath:'/'
+  }
+}
+
 module.exports = {
     mode: 'development',
     entry: './src/index.ts',
@@ -25,13 +32,11 @@ module.exports = {
         }, {
             test: /\.(png|svg|jpg|gif)$/,
             use: [
-                'file-loader'
+              fileLoader
             ]
         }, {
             test: /\.(woff|woff2|eot|ttf|otf)$/,
-            use: [
-                'file-loader'
-            ]
+            use: [fileLoader]
         }, {
             test: /\.tsx?$/,
             use: 'ts-loader',
