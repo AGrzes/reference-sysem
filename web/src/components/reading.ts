@@ -6,21 +6,37 @@ export const CurrentReading = Vue.extend({
   <h3>Read</h3>
   <div class="row">
     <div class="col-12 mt-4" v-for="book in read">
-      <h4>
-        {{book.title}}
-        <small>{{book.author.name}}</small>
-        <button type="button" class="btn btn-outline-dark"><i class="fas fa-plus-circle"></i></button>
+      <h4 class="d-flex flex-wrap">
+        <span>
+          {{book.title}}
+          <small class="mr-auto">{{book.author.name}}</small>
+        </span>
+        <span class="progress flex-grow-1 align-self-center">
+          <span class="progress-bar"
+            role="progressbar"
+            :style="{width: book.progress[0].position/book.pages*100+'%'}"
+            :aria-valuenow="book.progress[0].position"
+            aria-valuemin="0"
+            :aria-valuemax="book.pages">
+              {{book.progress[0].position}}/{{book.pages}}
+            </span>
+        </span>
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link"><i class="fas fa-plus-circle"></i></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link"><i class="fas fa-check"></i></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="dropdown"><i class="fas fa-ellipsis-h"></i></a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="#"><i class="fas fa-edit"></i>Edit</a>
+              <a class="dropdown-item" href="#"><i class="fas fa-minus-circle"></i>Delete</a>
+            </div>
+          </li>
+        </ul>
       </h4>
-      <div class="progress">
-        <div class="progress-bar"
-          role="progressbar"
-          :style="{width: book.progress[0].position/book.pages*100+'%'}"
-          :aria-valuenow="book.progress[0].position"
-          aria-valuemin="0"
-          :aria-valuemax="book.pages">
-            {{book.progress[0].position}}/{{book.pages}}
-          </div>
-      </div>
       <table class="table">
         <thead>
           <tr>
