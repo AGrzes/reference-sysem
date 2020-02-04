@@ -86,7 +86,7 @@ export const modal = <Component extends Vue.VueConstructor>
           component: options.component,
           title: options.title,
           componentProps: options.props,
-          buttons: options.buttons || [{name: 'close', onclick(m){m.close()}, class: 'btn-secondary'}]
+          buttons: options.buttons || [{name: 'close', onclick(m) {m.close()}, class: 'btn-secondary'}]
         }
     })
     instance.$mount()
