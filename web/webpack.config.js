@@ -60,7 +60,8 @@ module.exports = {
     resolve: {
         symlinks: false,
         alias: {
-            'vue$': path.resolve('node_modules/vue/dist/vue.esm.js')
+            'vue$': path.resolve('node_modules/vue/dist/vue.esm.js'),
+            'jquery': path.resolve('node_modules/jquery/src/jquery')
         }
     }
 }

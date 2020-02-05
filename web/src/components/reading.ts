@@ -1,4 +1,12 @@
 import {Vue} from 'yellow-common-vue'
+import { modal } from './modal'
+
+const ConfirmFinish = Vue.extend({
+  props: ['book'],
+  template: `
+<p>Confirm finishing "{{book.title}}"</p>
+  `
+})
 
 export const CurrentReading = Vue.extend({
   template: `
@@ -26,7 +34,7 @@ export const CurrentReading = Vue.extend({
             <a class="nav-link"><i class="fas fa-plus-circle"></i></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link"><i class="fas fa-check"></i></a>
+            <a class="nav-link" @click="finish(book)"><i class="fas fa-check"></i></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" data-toggle="dropdown"><i class="fas fa-ellipsis-h"></i></a>
@@ -57,6 +65,35 @@ export const CurrentReading = Vue.extend({
   </div>
 </div>
   `,
+  methods: {
+    finish(book) {
+      modal({
+        component: ConfirmFinish,
+        host: this.$el,
+        title: 'Confirm',
+        props: {book},
+        buttons: [
+          {
+            name: 'Confirm',
+            onclick: (m) => {
+              this.read[0].progress.unshift({
+                date: '2019-11-11',
+                position: this.read[0].pages
+              })
+              m.close()
+            },
+            class: 'btn-primary'
+          }, {
+            name: 'Cancel',
+            onclick(m) {
+              m.close()
+            },
+            class: 'btn-secondary'
+          }
+        ]
+      })
+    }
+  },
   data() {
     return {
       read: [{
