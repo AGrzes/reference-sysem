@@ -8,6 +8,13 @@ const ConfirmFinish = Vue.extend({
   `
 })
 
+const ConfirmDelete = Vue.extend({
+  props: ['book'],
+  template: `
+<p>Confirm removing reading attempt for "{{book.title}}"</p>
+  `
+})
+
 export const CurrentReading = Vue.extend({
   template: `
 <div class="col-9">
@@ -40,7 +47,7 @@ export const CurrentReading = Vue.extend({
             <a class="nav-link" data-toggle="dropdown"><i class="fas fa-ellipsis-h"></i></a>
             <div class="dropdown-menu">
               <a class="dropdown-item" href="#"><i class="fas fa-edit"></i>Edit</a>
-              <a class="dropdown-item" href="#"><i class="fas fa-minus-circle"></i>Delete</a>
+              <a class="dropdown-item" @click="cancel(book)"><i class="fas fa-minus-circle"></i>Delete</a>
             </div>
           </li>
         </ul>
@@ -81,6 +88,30 @@ export const CurrentReading = Vue.extend({
                 position: book.pages,
                 increment: book.pages - book.progress[0].position
               })
+              m.close()
+            },
+            class: 'btn-primary'
+          }, {
+            name: 'Cancel',
+            onclick(m) {
+              m.close()
+            },
+            class: 'btn-secondary'
+          }
+        ]
+      })
+    },
+    cancel(book) {
+      modal({
+        component: ConfirmDelete,
+        host: this.$el,
+        title: 'Confirm',
+        props: {book},
+        buttons: [
+          {
+            name: 'Confirm',
+            onclick: (m) => {
+              this.read.splice(this.read.indexOf(book), 1)
               m.close()
             },
             class: 'btn-primary'
