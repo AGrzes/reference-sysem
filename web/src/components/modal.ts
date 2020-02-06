@@ -53,7 +53,7 @@ Vue.component('modal-component', Modal)
 
 interface ModalButonClickArguments<Component extends Vue.VueConstructor> {
   event: Event
-  component: Component
+  component: InstanceType<Component>
   config: ModalButtonConfig<Component>
   close(): void
 }

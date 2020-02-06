@@ -15,6 +15,33 @@ const ConfirmDelete = Vue.extend({
   `
 })
 
+const AddProgress = Vue.extend({
+  props: ['book'],
+  template: `
+<form>
+  <div class="form-group">
+    <label for="exampleInputEmail1">Record progress reading "{{book.title}}"</label>
+    <div class="input-group">
+      <input class="form-control" placeholder="progress" aria-label="progress"
+        v-model="position"
+        type="number"
+        :min="this.book.progress[0].position"
+        :max="book.pages">
+      <div class="input-group-append">
+        <span class="input-group-text">/{{book.pages}}</span>
+        <span class="input-group-text">+{{position-this.book.progress[0].position}}</span>
+      </div>
+    </div>
+  </div>
+</form>
+  `,
+  data() {
+    return {
+      position: this.book.progress[0].position
+    }
+  }
+})
+
 export const CurrentReading = Vue.extend({
   template: `
 <div class="col-9">
@@ -38,7 +65,7 @@ export const CurrentReading = Vue.extend({
         </span>
         <ul class="nav">
           <li class="nav-item">
-            <a class="nav-link"><i class="fas fa-plus-circle"></i></a>
+            <a class="nav-link" @click="record(book)"><i class="fas fa-plus-circle"></i></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" @click="finish(book)"><i class="fas fa-check"></i></a>
@@ -112,6 +139,34 @@ export const CurrentReading = Vue.extend({
             name: 'Confirm',
             onclick: (m) => {
               this.read.splice(this.read.indexOf(book), 1)
+              m.close()
+            },
+            class: 'btn-primary'
+          }, {
+            name: 'Cancel',
+            onclick(m) {
+              m.close()
+            },
+            class: 'btn-secondary'
+          }
+        ]
+      })
+    },
+    record(book) {
+      modal({
+        component: AddProgress,
+        host: this.$el,
+        title: 'Confirm',
+        props: {book},
+        buttons: [
+          {
+            name: 'Confirm',
+            onclick: (m) => {
+              book.progress.unshift({
+                date: '2019-11-11',
+                position: m.component.position,
+                increment: m.component.position - book.progress[0].position
+              })
               m.close()
             },
             class: 'btn-primary'
