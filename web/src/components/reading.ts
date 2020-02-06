@@ -76,9 +76,10 @@ export const CurrentReading = Vue.extend({
           {
             name: 'Confirm',
             onclick: (m) => {
-              this.read[0].progress.unshift({
+              book.progress.unshift({
                 date: '2019-11-11',
-                position: this.read[0].pages
+                position: book.pages,
+                increment: book.pages - book.progress[0].position
               })
               m.close()
             },
