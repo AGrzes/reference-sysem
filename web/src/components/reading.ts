@@ -1,6 +1,5 @@
-import * as ace from 'ace-builds'
-import 'ace-builds/webpack-resolver'
 import {Vue} from 'yellow-common-vue'
+import './editor'
 import { modal } from './modal'
 
 const ConfirmFinish = Vue.extend({
@@ -20,14 +19,12 @@ const ConfirmDelete = Vue.extend({
 const Edit = Vue.extend({
   props: ['content'],
   template: `
-<div style="height: 100px" ref="editor">aaaa</div>
+<edit-yaml v-model="current"></edit-yaml>
   `,
-  mounted() {
-    ace.edit(this.$refs.editor, {
-      mode: 'ace/mode/javascript',
-      theme: 'ace/theme/github',
-      selectionStyle: 'text'
-    })
+  data() {
+    return {
+      current: this.content
+    }
   }
 })
 
@@ -206,6 +203,7 @@ export const CurrentReading = Vue.extend({
           {
             name: 'Confirm',
             onclick: (m) => {
+              book.progress = m.component.current
               m.close()
             },
             class: 'btn-primary'
