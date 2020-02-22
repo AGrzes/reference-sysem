@@ -1,4 +1,5 @@
 import {Vue} from 'yellow-common-vue'
+import './editor'
 import { modal } from './modal'
 
 const ConfirmFinish = Vue.extend({
@@ -13,6 +14,18 @@ const ConfirmDelete = Vue.extend({
   template: `
 <p>Confirm removing reading attempt for "{{book.title}}"</p>
   `
+})
+
+const Edit = Vue.extend({
+  props: ['content'],
+  template: `
+<edit-yaml v-model="current"></edit-yaml>
+  `,
+  data() {
+    return {
+      current: this.content
+    }
+  }
 })
 
 const AddProgress = Vue.extend({
@@ -73,7 +86,7 @@ export const CurrentReading = Vue.extend({
           <li class="nav-item">
             <a class="nav-link" data-toggle="dropdown"><i class="fas fa-ellipsis-h"></i></a>
             <div class="dropdown-menu">
-              <a class="dropdown-item" href="#"><i class="fas fa-edit"></i>Edit</a>
+              <a class="dropdown-item" @click="edit(book)"><i class="fas fa-edit"></i>Edit</a>
               <a class="dropdown-item" @click="cancel(book)"><i class="fas fa-minus-circle"></i>Delete</a>
             </div>
           </li>
@@ -167,6 +180,30 @@ export const CurrentReading = Vue.extend({
                 position: m.component.position,
                 increment: m.component.position - book.progress[0].position
               })
+              m.close()
+            },
+            class: 'btn-primary'
+          }, {
+            name: 'Cancel',
+            onclick(m) {
+              m.close()
+            },
+            class: 'btn-secondary'
+          }
+        ]
+      })
+    },
+    edit(book) {
+      modal({
+        component: Edit,
+        host: this.$el,
+        title: 'Confirm',
+        props: {content: book.progress},
+        buttons: [
+          {
+            name: 'Confirm',
+            onclick: (m) => {
+              book.progress = m.component.current
               m.close()
             },
             class: 'btn-primary'
